@@ -1,0 +1,13 @@
+
+Run e.g.
+
+  tn-creds -D vpn:mark-linux -f sswan-basic
+
+And then copy to the right location for your OS.  On Fedora:
+
+  sudo cp ipsec.secrets /etc/strongswan/
+  sudo cp ipsec.conf /etc/strongswan/
+  sudo cp ca.crt /etc/strongswan/ipsec.d/cacerts/
+  sudo cp mark-linux.pem /etc/strongswan/
+  sudo cp mark-linux.crt /etc/strongswan/
+

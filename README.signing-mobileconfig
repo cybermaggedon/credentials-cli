@@ -1,0 +1,39 @@
+
+See the -S -C and -K options to do this in the tool.
+Code signing keys are in 1password.
+
+To sign a mobileconfig file:
+
+- Create a signing key.  You can use the tools at:
+  git@github.com:cybermaggedon/certificate-tools
+
+  ./create-key > ca.pem
+  ./create-ca-cert -E ca@example.com -N 'Example Signing CA' \
+    -O 'Example' -U 'Signing' \
+    -k ca.pem -v 1000 > ca.crt
+
+  ./create-key  > signing.pem
+  ./create-cert-request  -E cyberprobe@example.com \
+    -O 'Example' -U 'Signing' \
+    -N 'Example Signing' -k signing.pem  > signing.csr
+  ./create-cert -c ca.crt -k ca.pem -r signing.csr -v 1000 -N > signing.crt
+
+- Package the signing key and cert
+
+  You only need to do this if you want to import the signing key to MacOS.
+  You don't need to do this.
+
+  openssl pkcs12 -export -out signing.p12 -inkey signing.pem -in signing.crt \
+    -CAfile ca.crt -passout pass:pass
+
+- Import ca.crt into Macbook so that it trusts code.
+
+- Sign any mobileconfig:
+
+  openssl smime -sign -in web-cert.mobileconfig -out web-cert-s.mobileconfig \
+    -signer signing.crt -inkey signing.pem -certfile ca.crt \
+    -outform der -nodetach
+  
+- Signing key should be automatically trusted.
+
+
